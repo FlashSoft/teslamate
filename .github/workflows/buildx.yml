@@ -14,7 +14,7 @@ on:
       - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
       - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
 env:
-  REGISTRY_IMAGE: teslamate/teslamate
+  REGISTRY_IMAGE: babyworld/teslamate
 
 permissions:
   contents: read
@@ -70,7 +70,7 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
         with:
-          username: teslamate
+          username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - uses: ./.github/actions/merge
