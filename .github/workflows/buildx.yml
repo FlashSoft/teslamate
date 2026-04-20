@@ -26,7 +26,7 @@ jobs:
 
   teslamate_build:
     needs: check_paths
-    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule'
+    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     strategy:
       fail-fast: false
       matrix:
@@ -51,6 +51,7 @@ jobs:
         uses: ./.github/actions/build
         with:
           is_dockerhub_pushed: "1"
+          docker_username: ${{ secrets.DOCKER_USERNAME }}
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
           repository_owner: ${{ github.repository_owner }}
           repository: ${{ github.repository }}
@@ -62,7 +63,7 @@ jobs:
     needs:
       - check_paths
       - teslamate_build
-    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule'
+    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -83,7 +84,7 @@ jobs:
             type=edge
   grafana:
     needs: check_paths
-    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule'
+    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -93,11 +94,12 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
         with:
-          username: teslamate
+          username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - uses: ./.github/actions/grafana
         with:
+          image: ${{ secrets.DOCKER_USERNAME }}/grafana
           tags: |
             type=edge
             type=schedule,pattern=edge

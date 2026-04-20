@@ -8,6 +8,9 @@ inputs:
   docker_password:
     description: "Docker password"
     required: true
+  docker_username:
+    description: "Docker Hub username"
+    required: true
   repository_owner:
     description: "Repository owner"
     required: true
@@ -52,7 +55,7 @@ runs:
       if: inputs.is_dockerhub_pushed != ''
       uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
       with:
-        username: babyworld
+        username: ${{ inputs.docker_username }}
         password: ${{ inputs.docker_password }}
     - name: Login to GitHub Container Registry
       uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
